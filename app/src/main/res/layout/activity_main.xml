@@ -2,18 +2,73 @@
 <android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
+    xmlns:fbutton="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context="fr.upmc.m2sar.findthisplace.MainActivity">
 
-    <TextView
-        android:layout_width="wrap_content"
+    <info.hoang8f.widget.FButton
+        android:id="@+id/btnPlayLvl0"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:text="Hello World!"
+        android:layout_marginEnd="32dp"
+        android:layout_marginStart="32dp"
+        android:text="@string/lvl_0_name"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.32999998" />
+        app:layout_constraintVertical_bias="0.529"
+        fbutton:buttonColor="@color/fbutton_color_emerald"
+        fbutton:shadowEnabled="true"
+        tools:text="@string/lvl_0_name" />
 
+    <info.hoang8f.widget.FButton
+        android:id="@+id/btnPlayLvl1"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="32dp"
+        android:layout_marginStart="32dp"
+        android:layout_marginTop="16dp"
+        android:text="@string/lvl_1_name"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/btnPlayLvl0"
+        fbutton:buttonColor="@color/fbutton_color_orange"
+        fbutton:shadowEnabled="true"
+        tools:text="@string/lvl_1_name" />
+
+    <info.hoang8f.widget.FButton
+        android:id="@+id/btnPlayLvl2"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="32dp"
+        android:layout_marginStart="32dp"
+        android:layout_marginTop="16dp"
+        android:text="@string/lvl_2_name"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/btnPlayLvl1"
+        fbutton:buttonColor="@color/fbutton_color_alizarin"
+        fbutton:shadowEnabled="true"
+        tools:text="@string/lvl_2_name" />
+
+    <info.hoang8f.widget.FButton
+        android:id="@+id/btnScores"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="32dp"
+        android:layout_marginStart="32dp"
+        android:text="@string/scores_btn"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/btnPlayLvl2"
+        fbutton:buttonColor="@color/fbutton_default_color"
+        fbutton:shadowEnabled="true"
+        tools:text="@string/scores_btn" />
 </android.support.constraint.ConstraintLayout>

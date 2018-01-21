@@ -1,3 +1,11 @@
 <resources>
-    <string name="app_name">FindThisPlace</string>
+    <string name="app_name" translatable="false">FindThisPlace</string>
+    <string name="play_btn">Play</string>
+    <string name="lvl_0_name">novice</string>
+    <string name="lvl_1_name">medium</string>
+    <string name="lvl_2_name">expert</string>
+    <string name="scores_btn">Scores</string>
+    <string name="result_phrase">You are: XXX away</string>
+    <string name="congratulation">Congratulations !</string>
+    <string name="congratulation_message">You finished the game !</string>
 </resources>

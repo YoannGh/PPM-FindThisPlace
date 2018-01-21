@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="lvl_0_name">novice</string>
+    <string name="lvl_1_name">moyen</string>
+    <string name="lvl_2_name">expert</string>
+    <string name="congratulation_message">Partie terminée !</string>
+    <string name="congratulation">Félicitations !</string>
+    <string name="result_phrase">Distance: XXX</string>
+    <string name="scores_btn">Scores</string>
+    <string name="play_btn">Jouer</string>
+</resources>

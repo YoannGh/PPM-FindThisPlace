@@ -8,4 +8,5 @@
     <string name="result_phrase">You are: XXX away</string>
     <string name="congratulation">Congratulations !</string>
     <string name="congratulation_message">You finished the game !</string>
+    <string name="title_activity_score">ScoreActivity</string>
 </resources>

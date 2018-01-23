@@ -1,4 +1,4 @@
-package fr.upmc.m2sar.findthisplace;
+package fr.upmc.m2sar.findthisplace.adapters;
 
 import android.content.Context;
 import android.support.annotation.NonNull;
@@ -11,6 +11,9 @@ import android.widget.TextView;
 import java.text.SimpleDateFormat;
 import java.util.List;
 
+import fr.upmc.m2sar.findthisplace.R;
+import fr.upmc.m2sar.findthisplace.data.Score;
+
 /**
  * Created by m2sar on 22/01/2018.
  */
@@ -18,7 +21,6 @@ import java.util.List;
 public class ScoreAdapter extends ArrayAdapter<Score> {
 
     private List<Score> scores;
-    private Context context;
     private SimpleDateFormat dateFormat;
 
     public ScoreAdapter(@NonNull Context context, @NonNull List<Score> scores) {
@@ -29,7 +31,6 @@ public class ScoreAdapter extends ArrayAdapter<Score> {
 
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
-        // TODO
 
         if(convertView == null) {
             // on recycle une vue

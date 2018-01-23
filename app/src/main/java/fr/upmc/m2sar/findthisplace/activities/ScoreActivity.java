@@ -1,13 +1,15 @@
-package fr.upmc.m2sar.findthisplace;
+package fr.upmc.m2sar.findthisplace.activities;
 
 import android.app.ListActivity;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.widget.ArrayAdapter;
 
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+
+import fr.upmc.m2sar.findthisplace.data.Score;
+import fr.upmc.m2sar.findthisplace.adapters.ScoreAdapter;
 
 public class ScoreActivity extends ListActivity {
 

@@ -5,7 +5,7 @@
     xmlns:fbutton="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="fr.upmc.m2sar.findthisplace.MainActivity">
+    tools:context="fr.upmc.m2sar.findthisplace.activities.MainActivity">
 
     <info.hoang8f.widget.FButton
         android:id="@+id/btnPlayLvl0"

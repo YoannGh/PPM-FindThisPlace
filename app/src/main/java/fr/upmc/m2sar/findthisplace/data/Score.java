@@ -1,4 +1,4 @@
-package fr.upmc.m2sar.findthisplace;
+package fr.upmc.m2sar.findthisplace.data;
 
 import java.util.Date;
 

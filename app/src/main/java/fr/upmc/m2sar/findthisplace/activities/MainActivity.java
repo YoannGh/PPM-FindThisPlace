@@ -1,10 +1,12 @@
-package fr.upmc.m2sar.findthisplace;
+package fr.upmc.m2sar.findthisplace.activities;
 
 import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
+
+import fr.upmc.m2sar.findthisplace.R;
 
 public class MainActivity extends AppCompatActivity implements View.OnClickListener {
 

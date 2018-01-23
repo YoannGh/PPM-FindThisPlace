@@ -1,4 +1,4 @@
-package fr.upmc.m2sar.findthisplace;
+package fr.upmc.m2sar.findthisplace.activities;
 
 import android.support.v4.app.FragmentActivity;
 import android.support.v7.app.AppCompatActivity;
@@ -13,6 +13,8 @@ import com.google.android.gms.maps.OnStreetViewPanoramaReadyCallback;
 import com.google.android.gms.maps.StreetViewPanorama;
 import com.google.android.gms.maps.StreetViewPanoramaFragment;
 import com.google.android.gms.maps.model.LatLng;
+
+import fr.upmc.m2sar.findthisplace.R;
 
 public class GameMapActivity extends FragmentActivity implements OnMapReadyCallback, OnStreetViewPanoramaReadyCallback {
 

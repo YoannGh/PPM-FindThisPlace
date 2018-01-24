@@ -7,6 +7,7 @@ import android.view.View;
 import android.widget.Button;
 
 import fr.upmc.m2sar.findthisplace.R;
+import fr.upmc.m2sar.findthisplace.activities.ScoreActivity;
 
 public class MainActivity extends AppCompatActivity implements View.OnClickListener {
 

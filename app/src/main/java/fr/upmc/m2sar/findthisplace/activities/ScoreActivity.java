@@ -1,33 +1,15 @@
 package fr.upmc.m2sar.findthisplace.activities;
 
-import android.app.ListActivity;
+import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.widget.ArrayAdapter;
 
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
+import fr.upmc.m2sar.findthisplace.R;
 
-import fr.upmc.m2sar.findthisplace.data.Score;
-import fr.upmc.m2sar.findthisplace.adapters.ScoreAdapter;
-
-public class ScoreActivity extends ListActivity {
-
-    private ArrayAdapter<Score> adapter;
-
+public class ScoreActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
-        List<Score> scores = new ArrayList<>();
-        scores.add(new Score("toto", new Date(), "Dur", 100));
-        scores.add(new Score("tata", new Date(), "Izi", 30000000));
-        scores.add(new Score("titi", new Date(), "Moyen", 3));
-
-        adapter = new ScoreAdapter(this, scores);
-
-        setListAdapter(adapter);
-
+        setContentView(R.layout.activity_score);
     }
 }

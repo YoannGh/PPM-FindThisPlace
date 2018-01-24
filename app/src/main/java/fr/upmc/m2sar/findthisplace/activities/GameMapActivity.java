@@ -1,10 +1,8 @@
 package fr.upmc.m2sar.findthisplace.activities;
 
-import android.support.v4.app.FragmentActivity;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v4.app.FragmentActivity;
 import android.util.Log;
-import android.widget.Toast;
 
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.MapFragment;
@@ -15,8 +13,12 @@ import com.google.android.gms.maps.StreetViewPanoramaFragment;
 import com.google.android.gms.maps.model.LatLng;
 
 import fr.upmc.m2sar.findthisplace.R;
+import fr.upmc.m2sar.findthisplace.game.GameDifficulty;
 
-public class GameMapActivity extends FragmentActivity implements OnMapReadyCallback, OnStreetViewPanoramaReadyCallback {
+public class GameMapActivity extends FragmentActivity implements
+        OnMapReadyCallback,
+        OnStreetViewPanoramaReadyCallback,
+        GoogleMap.OnMapClickListener {
 
     private static String TAG = "GameMapActivity";
 
@@ -44,5 +46,17 @@ public class GameMapActivity extends FragmentActivity implements OnMapReadyCallb
         this.streetView = streetViewPanorama;
 
         streetView.setPosition(new LatLng(48.599556, 2.266724));
+        GameDifficulty gd = GameDifficulty.values()[1];
+    }
+
+    @Override
+    public void onMapClick(LatLng latLng) {
+        Log.d(TAG, "onMapClick");
+    }
+
+    @Override
+    public void onStop() {
+        super.onStop();
+        // TODO: sauvegarder le score
     }
 }

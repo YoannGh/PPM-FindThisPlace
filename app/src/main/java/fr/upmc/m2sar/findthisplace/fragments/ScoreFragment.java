@@ -1,21 +1,17 @@
 package fr.upmc.m2sar.findthisplace.fragments;
 
-import android.support.v4.app.ListFragment;
 import android.arch.lifecycle.ViewModelProviders;
 import android.os.Bundle;
+import android.support.v4.app.ListFragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-
 import fr.upmc.m2sar.findthisplace.R;
-import fr.upmc.m2sar.findthisplace.data.Score;
 import fr.upmc.m2sar.findthisplace.adapters.ScoreAdapter;
-import fr.upmc.m2sar.findthisplace.data.ScoreViewModel;
+import fr.upmc.m2sar.findthisplace.model.Score;
+import fr.upmc.m2sar.findthisplace.model.ScoreViewModel;
 
 public class ScoreFragment extends ListFragment {
 
@@ -31,9 +27,13 @@ public class ScoreFragment extends ListFragment {
         super.onCreate(savedInstanceState);
 
         final ScoreViewModel viewModel = ViewModelProviders.of(this).get(ScoreViewModel.class);
-        viewModel.init();
+        viewModel.update();
 
         adapter = new ScoreAdapter(getContext(), viewModel.getScores().getValue());
         setListAdapter(adapter);
+
+        viewModel.getScores().observe(this, e -> {
+            adapter.notifyDataSetChanged();
+        });
     }
 }

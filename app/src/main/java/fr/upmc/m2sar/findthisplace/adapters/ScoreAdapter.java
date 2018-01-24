@@ -10,13 +10,10 @@ import android.widget.TextView;
 
 import java.text.SimpleDateFormat;
 import java.util.List;
+import java.util.Locale;
 
 import fr.upmc.m2sar.findthisplace.R;
-import fr.upmc.m2sar.findthisplace.data.Score;
-
-/**
- * Created by m2sar on 22/01/2018.
- */
+import fr.upmc.m2sar.findthisplace.model.Score;
 
 public class ScoreAdapter extends ArrayAdapter<Score> {
 
@@ -26,29 +23,30 @@ public class ScoreAdapter extends ArrayAdapter<Score> {
     public ScoreAdapter(@NonNull Context context, @NonNull List<Score> scores) {
         super(context, 0, scores);
         this.scores = scores;
-        dateFormat = new SimpleDateFormat(context.getString(R.string.date_format));
+        dateFormat = new SimpleDateFormat(context.getString(R.string.date_format), Locale.getDefault());
     }
 
     @Override
-    public View getView(int position, View convertView, ViewGroup parent) {
+    public View getView(int position, View convertView, @NonNull ViewGroup parent) {
 
         if(convertView == null) {
             // on recycle une vue
-            convertView = LayoutInflater.from(this.getContext()).inflate(R.layout.item_score, parent, false);
+            convertView = LayoutInflater.from(getContext()).inflate(R.layout.item_score, parent, false);
         }
 
-        TextView playerNameTV = (TextView) convertView.findViewById(R.id.score_player_name);
-        TextView dateTV = (TextView) convertView.findViewById(R.id.score_date);
-        TextView difficultyTV = (TextView) convertView.findViewById(R.id.score_difficulty);
-        TextView scoreTV = (TextView) convertView.findViewById(R.id.score_score);
+        TextView playerNameTV = convertView.findViewById(R.id.score_player_name);
+        TextView dateTV = convertView.findViewById(R.id.score_date);
+        TextView difficultyTV = convertView.findViewById(R.id.score_difficulty);
+        TextView scoreTV = convertView.findViewById(R.id.score_score);
 
         Score score = getItem(position);
 
-        playerNameTV.setText(score.getPlayerName());
-        dateTV.setText(dateFormat.format(score.getDate()));
-        difficultyTV.setText(score.getDifficulty());
-        scoreTV.setText(score.getScore() + "");
-
+        if(score != null) {
+            playerNameTV.setText(score.getPlayerName());
+            dateTV.setText(dateFormat.format(score.getDate()));
+            difficultyTV.setText(score.getDifficulty());
+            scoreTV.setText(score.getScore() + "");
+        }
         return convertView;
     }
 }

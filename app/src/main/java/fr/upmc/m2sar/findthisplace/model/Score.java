@@ -1,10 +1,6 @@
-package fr.upmc.m2sar.findthisplace.data;
+package fr.upmc.m2sar.findthisplace.model;
 
 import java.util.Date;
-
-/**
- * Created by m2sar on 22/01/2018.
- */
 
 public class Score {
 

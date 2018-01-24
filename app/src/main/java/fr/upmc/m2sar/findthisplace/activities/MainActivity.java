@@ -1,13 +1,14 @@
 package fr.upmc.m2sar.findthisplace.activities;
 
 import android.content.Intent;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.widget.Button;
 
 import fr.upmc.m2sar.findthisplace.R;
-import fr.upmc.m2sar.findthisplace.activities.ScoreActivity;
+import fr.upmc.m2sar.findthisplace.game.GameDifficulty;
+import fr.upmc.m2sar.findthisplace.game.GameMode;
 
 public class MainActivity extends AppCompatActivity implements View.OnClickListener {
 
@@ -21,10 +22,10 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        lvl0Btn = (Button) findViewById(R.id.btnPlayLvl0);
-        lvl1Btn = (Button) findViewById(R.id.btnPlayLvl1);
-        lvl2Btn = (Button) findViewById(R.id.btnPlayLvl2);
-        scoreBtn = (Button) findViewById(R.id.btnScores);
+        lvl0Btn = findViewById(R.id.btnPlayLvl0);
+        lvl1Btn = findViewById(R.id.btnPlayLvl1);
+        lvl2Btn = findViewById(R.id.btnPlayLvl2);
+        scoreBtn = findViewById(R.id.btnScores);
 
         lvl0Btn.setOnClickListener(this);
         lvl1Btn.setOnClickListener(this);
@@ -36,6 +37,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     public void onClick(View v) {
         if(v == lvl0Btn) {
             Intent intent = new Intent(this, GameMapActivity.class);
+            intent.putExtra(GameDifficulty.class.getName(), GameDifficulty.NOVICE);
+            intent.putExtra(GameMode.class.getName(), GameMode.CLASSIC);
             startActivity(intent);
         }
         else if(v == scoreBtn) {

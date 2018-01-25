@@ -9,6 +9,7 @@ import android.widget.ArrayAdapter;
 import android.widget.TextView;
 
 import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 
@@ -16,6 +17,8 @@ import fr.upmc.m2sar.findthisplace.R;
 import fr.upmc.m2sar.findthisplace.model.Score;
 
 public class ScoreAdapter extends ArrayAdapter<Score> {
+
+    private static final String TAG = "ScoreAdapter";
 
     private List<Score> scores;
     private SimpleDateFormat dateFormat;
@@ -43,7 +46,7 @@ public class ScoreAdapter extends ArrayAdapter<Score> {
 
         if(score != null) {
             playerNameTV.setText(score.getPlayerName());
-            dateTV.setText(dateFormat.format(score.getDate()));
+            dateTV.setText(dateFormat.format(new Date(score.getTimestamp())));
             difficultyTV.setText(score.getDifficulty());
             scoreTV.setText(score.getScore() + "");
         }

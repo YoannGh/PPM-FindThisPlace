@@ -12,4 +12,8 @@
     <string name="title_activity_maps">Map</string>
     <string name="date_format">dd-MMMM-yyyy HH:mm</string>
     <string name="score_empty">No score yet</string>
+    <string name="validate_position_title">Validate ?</string>
+    <string name="validate_position_message">Validate this position ?</string>
+    <string name="validate_position_positive">Yes</string>
+    <string name="validate_position_negative">No</string>
 </resources>

@@ -6,10 +6,10 @@ import android.arch.lifecycle.AndroidViewModel;
 import android.arch.lifecycle.LiveData;
 import android.arch.lifecycle.MutableLiveData;
 import android.content.Context;
+import android.util.Log;
 
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.ObjectInputStream;
@@ -17,7 +17,14 @@ import java.io.ObjectOutputStream;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * La classe ViewModel permet de stocker des donneés qui seront
+ * capables de survivre aux changements de configuration de l'application
+ * tels que les rotations d'écran
+ */
 public class ScoreViewModel extends AndroidViewModel {
+
+    private static final String TAG = "ScoreViewModel";
 
     private static final String SCORE_FILENAME = "scores.data";
     private LiveData<List<Score>> scores;
@@ -26,37 +33,25 @@ public class ScoreViewModel extends AndroidViewModel {
         super(context);
     }
 
-    public void update() {
-        if(this.scores != null) {
-            return;
-        }
-        scores = getData();
-    }
-
     public LiveData<List<Score>> getScores() {
+        if(scores == null) {
+            scores = getData();
+        }
         return scores;
-    }
-
-    public boolean addScore(Score s) {
-        return scores != null && scores.getValue().add(s);
     }
 
     private LiveData<List<Score>> getData() {
         final MutableLiveData<List<Score>> data = new MutableLiveData<>();
         File f = getApplication().getBaseContext().getFileStreamPath(SCORE_FILENAME);
         if(!f.exists()) {
+            Log.d(TAG, SCORE_FILENAME + " doesnt exist");
             data.setValue(new ArrayList<>());
+            scores = data;
             saveData();
         } else {
+            Log.d(TAG, SCORE_FILENAME + " exist");
             data.setValue(loadData());
         }
-        return data;
-    }
-
-    private LiveData<List<Score>> getDataa(Context context) {
-        final MutableLiveData<List<Score>> data = new MutableLiveData<>();
-        List<Score> scores = loadData();
-        data.setValue(scores);
         return data;
     }
 
@@ -67,7 +62,7 @@ public class ScoreViewModel extends AndroidViewModel {
         try {
             fis = getApplication().openFileInput(SCORE_FILENAME);
             ois = new ObjectInputStream(fis);
-            scores = (List<Score>) ois.readObject();
+            scores = (ArrayList<Score>) ois.readObject();
         } catch (IOException|ClassNotFoundException e) {
             e.printStackTrace();
         } finally {
@@ -87,11 +82,10 @@ public class ScoreViewModel extends AndroidViewModel {
         FileOutputStream fos = null;
         ObjectOutputStream oos = null;
         try {
+            getApplication().getBaseContext().getFileStreamPath(SCORE_FILENAME).delete();
             fos = getApplication().openFileOutput(SCORE_FILENAME, Context.MODE_PRIVATE);
             oos = new ObjectOutputStream(fos);
             oos.writeObject(scores.getValue());
-            oos.close();
-            fos.close();
         } catch (IOException e) {
             e.printStackTrace();
         } finally {

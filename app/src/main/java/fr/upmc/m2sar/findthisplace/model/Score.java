@@ -8,13 +8,13 @@ public class Score implements Serializable {
     private static final long serialVersionUID = 1L;
 
     private String playerName;
-    private long timestamp;
+    private Date date;
     private String difficulty;
     private long score;
 
-    public Score(String playerName, long timestamp, String difficulty, long score) {
+    public Score(String playerName, Date date, String difficulty, long score) {
         this.playerName = playerName;
-        this.timestamp = timestamp;
+        this.date = date;
         this.difficulty = difficulty;
         this.score = score;
     }
@@ -23,8 +23,8 @@ public class Score implements Serializable {
         return this.playerName;
     }
 
-    public long getTimestamp() {
-        return this.timestamp;
+    public Date getDate() {
+        return this.date;
     }
 
     public String getDifficulty() {
@@ -39,8 +39,8 @@ public class Score implements Serializable {
         this.playerName = playerName;
     }
 
-    public void setTimestamp(long timestamp) {
-        this.timestamp = timestamp;
+    public void setDate(Date date) {
+        this.date = date;
     }
 
     public void setDifficulty(String difficulty) {

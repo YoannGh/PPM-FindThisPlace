@@ -46,7 +46,7 @@ public class ScoreAdapter extends ArrayAdapter<Score> {
 
         if(score != null) {
             playerNameTV.setText(score.getPlayerName());
-            dateTV.setText(dateFormat.format(new Date(score.getTimestamp())));
+            dateTV.setText(dateFormat.format(score.getDate()));
             difficultyTV.setText(score.getDifficulty());
             scoreTV.setText(score.getScore() + "");
         }

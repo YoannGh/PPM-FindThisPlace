@@ -4,5 +4,5 @@ import com.google.android.gms.maps.model.LatLng;
 
 public interface IScoreCalculatorStrategy {
 
-    long calculateScore(LatLng expected, LatLng guess, GameDifficulty difficulty);
+    long calculateScore(LatLng expected, LatLng guess, double distance, GameDifficulty difficulty);
 }

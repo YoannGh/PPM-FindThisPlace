@@ -1,13 +1,14 @@
 <resources>
     <string name="app_name" translatable="false">FindThisPlace</string>
+    <string name="empty_string"></string>
     <string name="play_btn">Play</string>
     <string name="lvl_0_name">novice</string>
     <string name="lvl_1_name">medium</string>
     <string name="lvl_2_name">expert</string>
     <string name="scores_btn">Scores</string>
     <string name="result_phrase">You are: XXX away</string>
-    <string name="congratulation">Congratulations !</string>
-    <string name="congratulation_message">You finished the game !</string>
+    <string name="end_game_title">End of game</string>
+    <string name="end_game_message">Total score:</string>
     <string name="title_activity_score">ScoreActivity</string>
     <string name="title_activity_maps">Map</string>
     <string name="date_format">dd-MMMM-yyyy HH:mm</string>
@@ -16,4 +17,6 @@
     <string name="validate_position_message">Validate this position ?</string>
     <string name="validate_position_positive">Yes</string>
     <string name="validate_position_negative">No</string>
+    <string name="snackbar_score">Score:</string>
+    <string name="snackbar_next_place">Find next place</string>
 </resources>

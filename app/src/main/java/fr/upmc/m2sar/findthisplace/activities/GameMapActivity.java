@@ -32,9 +32,11 @@ import java.util.Date;
 
 import fr.upmc.m2sar.findthisplace.R;
 import fr.upmc.m2sar.findthisplace.game.CircumferenceBasedScoreCalculator;
+import fr.upmc.m2sar.findthisplace.game.CountryBasedScoreCalculator;
 import fr.upmc.m2sar.findthisplace.game.GameDifficulty;
 import fr.upmc.m2sar.findthisplace.game.GameMode;
 import fr.upmc.m2sar.findthisplace.game.IScoreCalculatorStrategy;
+import fr.upmc.m2sar.findthisplace.game.ReverseCircumferenceScoreCalculator;
 import fr.upmc.m2sar.findthisplace.model.PlacesViewModel;
 import fr.upmc.m2sar.findthisplace.model.Score;
 import fr.upmc.m2sar.findthisplace.model.ScoreViewModel;
@@ -69,7 +71,6 @@ public class GameMapActivity extends FragmentActivity implements
     private IScoreCalculatorStrategy scoreCalculator;
 
 
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -82,13 +83,15 @@ public class GameMapActivity extends FragmentActivity implements
         difficulty = (GameDifficulty) intent.getSerializableExtra(GameDifficulty.class.getName());
         mode = (GameMode) intent.getSerializableExtra(GameMode.class.getName());
 
-        Log.d(TAG, "Difficulty: " + difficulty.name());
-        Log.d(TAG, "Mode: " + mode.name());
-
-        if(mode == GameMode.CLASSIC) {
+        if(mode == GameMode.COUNTRY) {
+            scoreCalculator = new CountryBasedScoreCalculator(this);
+        }
+        else if(mode == GameMode.REVERSE) {
+            scoreCalculator = new ReverseCircumferenceScoreCalculator();
+        }
+        else {
             scoreCalculator = new CircumferenceBasedScoreCalculator();
         }
-        // TODO: Les autres modes
 
         placesModel = ViewModelProviders.of(this).get(PlacesViewModel.class);
         placesModel.update(StaticPlaces.getRandomPlacesForDifficulty(difficulty, NUMBER_OF_PLACES_TO_GUESS));
@@ -136,7 +139,7 @@ public class GameMapActivity extends FragmentActivity implements
         super.onStop();
 
         if(isGameFinished) {
-            scoresModel.getScores().getValue().add(new Score("toto", new Date(), difficulty.name(), currScore));
+            scoresModel.getScores().getValue().add(new Score("toto", new Date(), difficulty.name(), mode.name(), currScore));
             scoresModel.saveData();
         }
     }
@@ -217,7 +220,7 @@ public class GameMapActivity extends FragmentActivity implements
                             .include(guessCoordinates)
                             .include(correctCoordinates)
                             .build();
-                    map.animateCamera(CameraUpdateFactory.newLatLngBounds(bounds, 5));
+                    map.animateCamera(CameraUpdateFactory.newLatLngBounds(bounds, 100));
         }).show();
 
         currPlaceIndex++;

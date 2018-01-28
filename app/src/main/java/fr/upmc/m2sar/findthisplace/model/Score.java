@@ -10,12 +10,14 @@ public class Score implements Serializable {
     private String playerName;
     private Date date;
     private String difficulty;
+    private String mode;
     private long score;
 
-    public Score(String playerName, Date date, String difficulty, long score) {
+    public Score(String playerName, Date date, String difficulty, String mode, long score) {
         this.playerName = playerName;
         this.date = date;
         this.difficulty = difficulty;
+        this.mode = mode;
         this.score = score;
     }
 
@@ -31,6 +33,8 @@ public class Score implements Serializable {
         return this.difficulty;
     }
 
+    public String getMode() { return this.mode; }
+
     public long getScore() {
         return this.score;
     }
@@ -39,13 +43,13 @@ public class Score implements Serializable {
         this.playerName = playerName;
     }
 
-    public void setDate(Date date) {
-        this.date = date;
-    }
+    public void setDate(Date date) { this.date = date; }
 
     public void setDifficulty(String difficulty) {
         this.difficulty = difficulty;
     }
+
+    public void setMode(String mode) { this.mode = mode; }
 
     public void setScore(long score) {
         this.score = score;

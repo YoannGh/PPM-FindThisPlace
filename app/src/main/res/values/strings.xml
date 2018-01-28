@@ -21,4 +21,12 @@
     <string name="snackbar_score">Score:</string>
     <string name="snackbar_next_place">Find next place</string>
     <string name="no_internet_perm">This application cannot work without Internet access permission</string>
+    <string name="dialog_gamemode_title">Choose a gamemode</string>
+    <string name="desc_mode_classic">(find the correct place)</string>
+    <string name="desc_mode_country">(find the correct country)</string>
+    <string name="desc_mode_reverse">(find the most distant place)</string>
+    <string name="wrong_country_dialog_title">Wrong</string>
+    <string name="wrong_country_dialog">This is not the country we were looking for</string>
+    <string name="correct_country_dialog_title">Correct</string>
+    <string name="correct_country_dialog">You have found the country XXX</string>
 </resources>

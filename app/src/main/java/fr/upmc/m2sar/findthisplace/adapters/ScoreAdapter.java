@@ -40,6 +40,7 @@ public class ScoreAdapter extends ArrayAdapter<Score> {
         TextView playerNameTV = convertView.findViewById(R.id.score_player_name);
         TextView dateTV = convertView.findViewById(R.id.score_date);
         TextView difficultyTV = convertView.findViewById(R.id.score_difficulty);
+        TextView modeTV = convertView.findViewById(R.id.score_mode);
         TextView scoreTV = convertView.findViewById(R.id.score_score);
 
         Score score = getItem(position);
@@ -48,6 +49,7 @@ public class ScoreAdapter extends ArrayAdapter<Score> {
             playerNameTV.setText(score.getPlayerName());
             dateTV.setText(dateFormat.format(score.getDate()));
             difficultyTV.setText(score.getDifficulty());
+            modeTV.setText(score.getMode());
             scoreTV.setText(score.getScore() + "");
         }
         return convertView;

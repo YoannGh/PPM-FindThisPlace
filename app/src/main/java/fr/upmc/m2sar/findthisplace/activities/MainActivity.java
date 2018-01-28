@@ -9,8 +9,6 @@ import android.os.Build;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
-import android.view.Window;
-import android.view.WindowManager;
 import android.widget.Button;
 
 import fr.upmc.m2sar.findthisplace.R;
@@ -34,8 +32,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        //if(getApplication().getBaseContext().getFileStreamPath("scores.data").exists())
-        //    getApplication().getBaseContext().getFileStreamPath("scores.data").delete();
+        if(getApplication().getBaseContext().getFileStreamPath("scores.data").exists())
+            getApplication().getBaseContext().getFileStreamPath("scores.data").delete();
 
         final String[] perms = { Manifest.permission.INTERNET };
 
@@ -57,15 +55,23 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     }
 
     @Override
+    public void onRequestPermissionsResult(int permsRequestCode, String[] permissions, int[] grantResults) {
+        if(this.permsRequestCode == permsRequestCode) {
+            boolean internet = grantResults[0] == PackageManager.PERMISSION_GRANTED;
+            this.hasPermissions = internet;
+        }
+    }
+
+    @Override
     public void onClick(View v) {
         if(v == lvl0Btn) {
-            startGameWithDifficultyAndModeIfPerms(GameDifficulty.NOVICE, GameMode.CLASSIC);
+            chooseGamemodeWithDifficulty(GameDifficulty.NOVICE);
         }
         else if(v == lvl1Btn) {
-            startGameWithDifficultyAndModeIfPerms(GameDifficulty.MEDIUM, GameMode.CLASSIC);
+            chooseGamemodeWithDifficulty(GameDifficulty.MEDIUM);
         }
         else if(v == lvl2Btn) {
-            startGameWithDifficultyAndModeIfPerms(GameDifficulty.EXPERT, GameMode.CLASSIC);
+            chooseGamemodeWithDifficulty(GameDifficulty.EXPERT);
         }
         else if(v == scoreBtn) {
             Intent intent = new Intent(this, ScoreActivity.class);
@@ -73,12 +79,16 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         }
     }
 
-    @Override
-    public void onRequestPermissionsResult(int permsRequestCode, String[] permissions, int[] grantResults) {
-        if(this.permsRequestCode == permsRequestCode) {
-            boolean internet = grantResults[0] == PackageManager.PERMISSION_GRANTED;
-            this.hasPermissions = internet;
-        }
+    private void chooseGamemodeWithDifficulty(GameDifficulty difficulty) {
+        String[] items = new String[GameMode.values().length];
+        items[0] = GameMode.CLASSIC.name() + " " + getResources().getString(R.string.desc_mode_classic);
+        items[1] = GameMode.COUNTRY.name() + " " + getResources().getString(R.string.desc_mode_country);
+        items[2] = GameMode.REVERSE.name() + " " + getResources().getString(R.string.desc_mode_reverse);
+        new AlertDialog.Builder(this)
+                .setTitle(R.string.dialog_gamemode_title)
+                .setItems(items, (DialogInterface dialog, int which) -> {
+                    startGameWithDifficultyAndModeIfPerms(difficulty, GameMode.values()[which]);
+        }).show();
     }
 
     private void startGameWithDifficultyAndModeIfPerms(GameDifficulty difficulty, GameMode mode) {

@@ -1,6 +1,5 @@
 package fr.upmc.m2sar.findthisplace.model;
 
-
 import android.app.Application;
 import android.arch.lifecycle.AndroidViewModel;
 import android.arch.lifecycle.LiveData;

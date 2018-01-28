@@ -1,14 +1,11 @@
 package fr.upmc.m2sar.findthisplace.util;
 
 import android.location.Location;
+import android.support.annotation.NonNull;
 
 import com.google.android.gms.maps.model.LatLng;
 
 import java.text.DecimalFormat;
-
-/**
- * Created by Yo on 27/01/2018.
- */
 
 public class DistanceUtil {
 
@@ -27,7 +24,9 @@ public class DistanceUtil {
         return distances[0]/1000.0;
     }
 
+    @NonNull
     public static String distanceToString(double distanceInKilometers) {
         return df.format(distanceInKilometers) + "km";
     }
+
 }

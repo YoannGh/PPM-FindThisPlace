@@ -5,17 +5,11 @@ import com.google.android.gms.maps.model.LatLng;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 import fr.upmc.m2sar.findthisplace.game.GameDifficulty;
-
-/**
- * Created by Yo on 25/01/2018.
- */
 
 public class StaticPlaces {
 
@@ -107,4 +101,5 @@ public class StaticPlaces {
         }
         return res;
     }
+
 }

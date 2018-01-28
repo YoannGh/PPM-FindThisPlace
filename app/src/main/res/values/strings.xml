@@ -29,4 +29,12 @@
     <string name="wrong_country_dialog">This is not the country we were looking for</string>
     <string name="correct_country_dialog_title">Correct</string>
     <string name="correct_country_dialog">You have found the country XXX</string>
+    <string name="btn_change_profile">Pick player profile</string>
+    <string name="default_textview_playername">Please pick a player profile</string>
+    <string name="dialog_pick_player_title">Pick a player profile</string>
+    <string name="dialog_no_playerprofile">Please pick a player profile first</string>
+    <string name="dialog_create_new_player">New</string>
+    <string name="dialog_cancel">Cancel</string>
+    <string name="dialog_create_firstname_hint">Firstname</string>
+    <string name="dialog_create_lastname_hint">Lastname</string>
 </resources>

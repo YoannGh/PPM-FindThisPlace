@@ -32,19 +32,5 @@ public class ScoreFragment extends ListFragment {
         ScoreAdapter adapter = new ScoreAdapter(getActivity(), scoresModel.getScores().getValue());
         setListAdapter(adapter);
     }
-/*
-    @Override
-    public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
 
-        final ScoreViewModel viewModel = ViewModelProviders.of(this).get(ScoreViewModel.class);
-        viewModel.update();
-
-        adapter = new ScoreAdapter(getContext(), viewModel.getScores().getValue());
-        setListAdapter(adapter);
-
-        viewModel.getScores().observe(this, e -> {
-            adapter.notifyDataSetChanged();
-        });
-    }*/
 }

@@ -13,10 +13,6 @@ import java.util.List;
 
 import fr.upmc.m2sar.findthisplace.R;
 
-/**
- * Created by Yo on 28/01/2018.
- */
-
 public class CountryBasedScoreCalculator implements IScoreCalculatorStrategy {
 
     private Context context;

@@ -9,10 +9,6 @@ import com.google.android.gms.maps.model.LatLng;
 import java.util.List;
 
 /**
- * Created by Yo on 25/01/2018.
- */
-
-/**
  * La classe ViewModel permet de stocker des donneés qui seront
  * capables de survivre aux changements de configuration de l'application
  * tels que les rotations d'écran

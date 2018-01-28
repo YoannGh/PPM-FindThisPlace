@@ -38,6 +38,7 @@ import fr.upmc.m2sar.findthisplace.game.GameMode;
 import fr.upmc.m2sar.findthisplace.game.IScoreCalculatorStrategy;
 import fr.upmc.m2sar.findthisplace.game.ReverseCircumferenceScoreCalculator;
 import fr.upmc.m2sar.findthisplace.model.PlacesViewModel;
+import fr.upmc.m2sar.findthisplace.model.PlayerProfile;
 import fr.upmc.m2sar.findthisplace.model.Score;
 import fr.upmc.m2sar.findthisplace.model.ScoreViewModel;
 import fr.upmc.m2sar.findthisplace.model.StaticPlaces;
@@ -59,6 +60,7 @@ public class GameMapActivity extends FragmentActivity implements
     private PlacesViewModel placesModel;
     private ScoreViewModel scoresModel;
 
+    private String playerName;
     private GameDifficulty difficulty;
     private GameMode mode;
     private MarkerOptions currMarker;
@@ -80,6 +82,7 @@ public class GameMapActivity extends FragmentActivity implements
         ((StreetViewPanoramaFragment) getFragmentManager().findFragmentById(R.id.streetviewpanorama)).getStreetViewPanoramaAsync(this);
 
         Intent intent = getIntent();
+        playerName = intent.getStringExtra(PlayerProfile.class.getName());
         difficulty = (GameDifficulty) intent.getSerializableExtra(GameDifficulty.class.getName());
         mode = (GameMode) intent.getSerializableExtra(GameMode.class.getName());
 
@@ -139,7 +142,7 @@ public class GameMapActivity extends FragmentActivity implements
         super.onStop();
 
         if(isGameFinished) {
-            scoresModel.getScores().getValue().add(new Score("toto", new Date(), difficulty.name(), mode.name(), currScore));
+            scoresModel.getScores().getValue().add(new Score(playerName, new Date(), difficulty.name(), mode.name(), currScore));
             scoresModel.saveData();
         }
     }

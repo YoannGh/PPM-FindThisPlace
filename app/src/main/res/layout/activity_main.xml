@@ -7,19 +7,47 @@
     android:layout_height="match_parent"
     tools:context="fr.upmc.m2sar.findthisplace.activities.MainActivity">
 
+    <TextView
+        android:id="@+id/playername"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="8dp"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="70dp"
+        android:text="@string/default_textview_playername"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        tools:text="@string/default_textview_playername" />
+
+    <info.hoang8f.widget.FButton
+        android:id="@+id/btnChangePlayer"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="32dp"
+        android:layout_marginStart="32dp"
+        android:layout_marginTop="16dp"
+        android:text="@string/btn_change_profile"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.50"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/playername"
+        fbutton:buttonColor="@color/fbutton_color_silver"
+        tools:text="@string/btn_change_profile" />
+
     <info.hoang8f.widget.FButton
         android:id="@+id/btnPlayLvl0"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginEnd="32dp"
         android:layout_marginStart="32dp"
+        android:layout_marginTop="8dp"
         android:text="@string/lvl_0_name"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.529"
+        app:layout_constraintTop_toBottomOf="@+id/btnChangePlayer"
         fbutton:buttonColor="@color/fbutton_color_emerald"
         fbutton:shadowEnabled="true"
         tools:text="@string/lvl_0_name" />
@@ -71,4 +99,5 @@
         fbutton:buttonColor="@color/fbutton_default_color"
         fbutton:shadowEnabled="true"
         tools:text="@string/scores_btn" />
+
 </android.support.constraint.ConstraintLayout>

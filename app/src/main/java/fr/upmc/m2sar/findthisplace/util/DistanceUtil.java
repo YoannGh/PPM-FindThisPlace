@@ -12,7 +12,7 @@ import java.text.DecimalFormat;
 
 public class DistanceUtil {
 
-    private static final DecimalFormat df = new DecimalFormat(".##");
+    private static final DecimalFormat df = new DecimalFormat("#.##");
 
     public static double distanceBetweenInKilometers(LatLng coordA, LatLng coordB) {
         float distances[] = new float[1];

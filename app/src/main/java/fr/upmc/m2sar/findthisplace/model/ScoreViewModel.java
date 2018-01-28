@@ -6,7 +6,6 @@ import android.arch.lifecycle.AndroidViewModel;
 import android.arch.lifecycle.LiveData;
 import android.arch.lifecycle.MutableLiveData;
 import android.content.Context;
-import android.util.Log;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -44,12 +43,10 @@ public class ScoreViewModel extends AndroidViewModel {
         final MutableLiveData<List<Score>> data = new MutableLiveData<>();
         File f = getApplication().getBaseContext().getFileStreamPath(SCORE_FILENAME);
         if(!f.exists()) {
-            Log.d(TAG, SCORE_FILENAME + " doesnt exist");
             data.setValue(new ArrayList<>());
             scores = data;
             saveData();
         } else {
-            Log.d(TAG, SCORE_FILENAME + " exist");
             data.setValue(loadData());
         }
         return data;

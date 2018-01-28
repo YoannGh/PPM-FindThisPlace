@@ -12,6 +12,8 @@ import android.view.ViewGroup;
 import android.view.Window;
 import android.view.WindowManager;
 
+import com.google.android.gms.maps.CameraUpdate;
+import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.MapFragment;
 import com.google.android.gms.maps.OnMapReadyCallback;
@@ -19,6 +21,7 @@ import com.google.android.gms.maps.OnStreetViewPanoramaReadyCallback;
 import com.google.android.gms.maps.StreetViewPanorama;
 import com.google.android.gms.maps.StreetViewPanoramaFragment;
 import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.LatLngBounds;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.maps.model.PolylineOptions;
@@ -60,6 +63,7 @@ public class GameMapActivity extends FragmentActivity implements
     private int currPlaceIndex = 0;
     private boolean isGameFinished = false;
     private boolean isGameStarted = false;
+    private boolean isCurrentlyGuessing = false;
     private IScoreCalculatorStrategy scoreCalculator;
 
 
@@ -76,13 +80,18 @@ public class GameMapActivity extends FragmentActivity implements
         difficulty = (GameDifficulty) intent.getSerializableExtra(GameDifficulty.class.getName());
         mode = (GameMode) intent.getSerializableExtra(GameMode.class.getName());
 
+        Log.d(TAG, "Difficulty: " + difficulty.name());
+        Log.d(TAG, "Mode: " + mode.name());
+
         if(mode == GameMode.CLASSIC) {
             scoreCalculator = new CircumferenceBasedScoreCalculator();
         }
         // TODO: Les autres modes
 
         placesModel = ViewModelProviders.of(this).get(PlacesViewModel.class);
-        placesModel.update(StaticPlaces.getRandomPlacesForDifficulty(difficulty, 10));
+        placesModel.update(StaticPlaces.getRandomPlacesForDifficulty(difficulty, 3));
+
+        Log.d(TAG, "After getRandomPlacesForDifficulty size: " + placesModel.getPlaces().size());
 
         scoresModel = ViewModelProviders.of(this).get(ScoreViewModel.class);
 
@@ -115,20 +124,11 @@ public class GameMapActivity extends FragmentActivity implements
     public void onMapClick(LatLng latLng) {
         Log.d(TAG, "onMapClick");
 
-        if(currMarker == null) {
+        if(isCurrentlyGuessing) {
+            map.clear();
             currMarker = new MarkerOptions().position(latLng).draggable(true);
-        } else {
-            currMarker.position(latLng);
+            map.addMarker(currMarker);
         }
-    }
-
-    private void updateToValidPanorama(LatLng coordinates) {
-        int radius = 0;
-        do {
-            radius += 50;
-            streetView.setPosition(coordinates, radius);
-        } while (streetView.getLocation() == null);
-        streetViewLocationToGuess = streetView.getLocation();
     }
 
     @Override
@@ -146,21 +146,23 @@ public class GameMapActivity extends FragmentActivity implements
         if(currMarker == null || marker == null || !isGameStarted)
             return false;
 
-        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        if(isCurrentlyGuessing) {
+            AlertDialog.Builder builder = new AlertDialog.Builder(this);
 
-        builder.setMessage(R.string.validate_position_message).setCancelable(false);
+            builder.setMessage(R.string.validate_position_message).setCancelable(false);
 
-        builder.setPositiveButton(R.string.validate_position_positive, (DialogInterface dialog, int which) -> {
-            handleGuess(marker.getPosition());
-        });
+            builder.setPositiveButton(R.string.validate_position_positive, (DialogInterface dialog, int which) -> {
+                handleGuess(marker.getPosition());
+            });
 
-        builder.setNegativeButton(R.string.validate_position_negative, (DialogInterface dialog, int which) -> {
-            dialog.cancel();
-        });
+            builder.setNegativeButton(R.string.validate_position_negative, (DialogInterface dialog, int which) -> {
+                dialog.cancel();
+            });
 
-        builder.show();
+            builder.show();
+        }
 
-        return true;
+        return isCurrentlyGuessing;
     }
 
     private void gameStart() {
@@ -172,7 +174,8 @@ public class GameMapActivity extends FragmentActivity implements
 
     private void gameProgress() {
         if(stillPlacesToFind()) {
-            updateToValidPanorama(placesModel.getPlaces().get(currPlaceIndex));
+            isCurrentlyGuessing = true;
+            streetView.setPosition(placesModel.getPlaces().get(currPlaceIndex), 50);
         } else {
             isGameFinished = true;
             handleEndOfGame();
@@ -186,10 +189,14 @@ public class GameMapActivity extends FragmentActivity implements
     private void handleGuess(LatLng guessCoordinates) {
         LatLng correctCoordinates = placesModel.getPlaces().get(currPlaceIndex);
 
+        isCurrentlyGuessing = false;
+
+        map.addMarker(new MarkerOptions()
+                .position(correctCoordinates));
+
         map.addPolyline(new PolylineOptions()
                 .add(guessCoordinates, correctCoordinates)
-                .color(R.color.fbutton_color_pumpkin))
-                .setGeodesic(true);
+                .color(R.color.fbutton_color_pumpkin));
 
         double distance = DistanceUtil.distanceBetweenInKilometers(guessCoordinates, correctCoordinates);
 
@@ -203,21 +210,31 @@ public class GameMapActivity extends FragmentActivity implements
         String resultPhrase = getResources().getString(R.string.result_phrase)
                 .replace("XXX", DistanceUtil.distanceToString(distance));
 
-        new AlertDialog.Builder(this).setMessage(resultPhrase).show();
+        new AlertDialog.Builder(this).setMessage(resultPhrase)
+                .setPositiveButton(R.string.OK, (DialogInterface dialog, int which) -> {
+                    map.animateCamera(CameraUpdateFactory.zoomOut());
+                    LatLngBounds bounds = LatLngBounds.builder()
+                            .include(guessCoordinates)
+                            .include(correctCoordinates)
+                            .build();
+                    map.animateCamera(CameraUpdateFactory.newLatLngBounds(bounds, 5));
+        }).show();
 
         currPlaceIndex++;
 
-        if(stillPlacesToFind()) {
+        String scorePhrase = getResources().getString(R.string.snackbar_score) + " " + currScore;
 
-            String scorePhrase = getResources().getString(R.string.snackbar_score) + " " + currScore;
+        final ViewGroup contentView = (ViewGroup) ((ViewGroup) this
+                .findViewById(android.R.id.content)).getChildAt(0);
 
-            final ViewGroup contentView = (ViewGroup) ((ViewGroup) this
-                    .findViewById(android.R.id.content)).getChildAt(0);
-            Snackbar.make(contentView, scorePhrase, Snackbar.LENGTH_INDEFINITE)
-                    .setAction(R.string.snackbar_next_place, view -> {
-                        gameProgress();
-                    }).show();
-        }
+        Snackbar snackbar = Snackbar.make(contentView, scorePhrase, Snackbar.LENGTH_INDEFINITE);
+        snackbar.setAction(R.string.snackbar_next_place, view -> {
+                    map.clear();
+                    currMarker = null;
+                    snackbar.dismiss();
+                    gameProgress();
+        });
+        snackbar.show();
     }
 
     private void handleEndOfGame() {
@@ -226,8 +243,8 @@ public class GameMapActivity extends FragmentActivity implements
         new AlertDialog.Builder(this)
                 .setTitle(R.string.end_game_title)
                 .setMessage(endGamePhrase)
-                .setPositiveButton("OK", (DialogInterface dialog, int which) -> {
+                .setPositiveButton(R.string.OK, (DialogInterface dialog, int which) -> {
                     finish();
-        });
+        }).show();
     }
 }

@@ -26,12 +26,9 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        if(getApplication().getBaseContext().getFileStreamPath("scores.data").exists())
-            getApplication().getBaseContext().getFileStreamPath("scores.data").delete();
+        //if(getApplication().getBaseContext().getFileStreamPath("scores.data").exists())
+        //    getApplication().getBaseContext().getFileStreamPath("scores.data").delete();
 
-        // rendre la status bar transparente pour une meilleure visibilité
-        Window window = getWindow();
-        window.setFlags(WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS, WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS);
 
         lvl0Btn = findViewById(R.id.btnPlayLvl0);
         lvl1Btn = findViewById(R.id.btnPlayLvl1);

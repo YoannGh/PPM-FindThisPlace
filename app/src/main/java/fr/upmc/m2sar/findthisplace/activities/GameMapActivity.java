@@ -49,6 +49,8 @@ public class GameMapActivity extends FragmentActivity implements
 
     private static String TAG = "GameMapActivity";
 
+    private static int NUMBER_OF_PLACES_TO_GUESS = 3;
+
     private GoogleMap map;
     private StreetViewPanorama streetView;
 
@@ -89,9 +91,7 @@ public class GameMapActivity extends FragmentActivity implements
         // TODO: Les autres modes
 
         placesModel = ViewModelProviders.of(this).get(PlacesViewModel.class);
-        placesModel.update(StaticPlaces.getRandomPlacesForDifficulty(difficulty, 3));
-
-        Log.d(TAG, "After getRandomPlacesForDifficulty size: " + placesModel.getPlaces().size());
+        placesModel.update(StaticPlaces.getRandomPlacesForDifficulty(difficulty, NUMBER_OF_PLACES_TO_GUESS));
 
         scoresModel = ViewModelProviders.of(this).get(ScoreViewModel.class);
 

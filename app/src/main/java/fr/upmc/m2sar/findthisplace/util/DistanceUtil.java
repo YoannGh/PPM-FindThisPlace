@@ -12,6 +12,8 @@ import java.text.DecimalFormat;
 
 public class DistanceUtil {
 
+    public static final long EARTH_CIRCUMFERENCE = 40075;
+
     private static final DecimalFormat df = new DecimalFormat("#.##");
 
     public static double distanceBetweenInKilometers(LatLng coordA, LatLng coordB) {

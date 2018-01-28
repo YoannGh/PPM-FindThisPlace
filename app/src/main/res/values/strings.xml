@@ -20,4 +20,5 @@
     <string name="validate_position_negative">No</string>
     <string name="snackbar_score">Score:</string>
     <string name="snackbar_next_place">Find next place</string>
+    <string name="no_internet_perm">This application cannot work without Internet access permission</string>
 </resources>

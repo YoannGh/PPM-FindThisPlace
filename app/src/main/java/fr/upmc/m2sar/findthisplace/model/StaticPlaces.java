@@ -12,7 +12,6 @@ import java.util.Map;
 import java.util.Set;
 
 import fr.upmc.m2sar.findthisplace.game.GameDifficulty;
-import fr.upmc.m2sar.findthisplace.game.GameMode;
 
 /**
  * Created by Yo on 25/01/2018.

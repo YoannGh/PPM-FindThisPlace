@@ -12,6 +12,7 @@ import android.view.ViewGroup;
 import android.view.Window;
 import android.view.WindowManager;
 
+import com.google.android.gms.games.Game;
 import com.google.android.gms.maps.CameraUpdate;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
@@ -52,7 +53,7 @@ public class GameMapActivity extends FragmentActivity implements
 
     private static String TAG = "GameMapActivity";
 
-    private static int NUMBER_OF_PLACES_TO_GUESS = 3;
+    private static int NUMBER_OF_PLACES_TO_GUESS = 3; // TODO clean
 
     private GoogleMap map;
     private StreetViewPanorama streetView;
@@ -60,11 +61,22 @@ public class GameMapActivity extends FragmentActivity implements
     private PlacesViewModel placesModel;
     private ScoreViewModel scoresModel;
 
+    private static final String STATE_PLAYERNAME = "playerName";
+    private static final String STATE_DIFFICULTY = "difficulty";
+    private static final String STATE_MODE = "mode";
+    private static final String STATE_MARKER = "currMarker";
+    private static final String STATE_GUESS_COORDS = "currGuessCoords";
+    private static final String STATE_SCORE = "currScore";
+    private static final String STATE_PLACE_INDEX = "currPlaceIndex";
+    private static final String STATE_GAME_FINISHED = "isGameFinished";
+    private static final String STATE_GAME_STARTED = "isGameStarted";
+    private static final String STATE_GAME_GUESSING = "isCurrentlyGuessing";
+
     private String playerName;
     private GameDifficulty difficulty;
     private GameMode mode;
     private MarkerOptions currMarker;
-    private StreetViewPanoramaLocation streetViewLocationToGuess;
+    private LatLng currGuessCoords;
     private long currScore = 0;
     private int currPlaceIndex = 0;
     private boolean isGameFinished = false;
@@ -112,6 +124,16 @@ public class GameMapActivity extends FragmentActivity implements
         this.map = googleMap;
         this.map.setOnMapClickListener(this);
         this.map.setOnMarkerClickListener(this);
+
+        // dans le cas où l'activité est restaurée (après rotation)
+        // onMapReady est appelée et currMarker et currGuessCoords ne sont pas null
+        // on replace donc les éléments sur la map
+        if(currMarker != null) {
+            map.addMarker(currMarker);
+        }
+        if(currGuessCoords != null) {
+            showAnswer(currGuessCoords, placesModel.getPlaces().get(currPlaceIndex));
+        }
     }
 
     @Override
@@ -158,7 +180,8 @@ public class GameMapActivity extends FragmentActivity implements
             builder.setMessage(R.string.validate_position_message).setCancelable(false);
 
             builder.setPositiveButton(R.string.validate_position_positive, (DialogInterface dialog, int which) -> {
-                handleGuess(marker.getPosition());
+                currGuessCoords = marker.getPosition();
+                handleGuess(currGuessCoords);
             });
 
             builder.setNegativeButton(R.string.validate_position_negative, (DialogInterface dialog, int which) -> {
@@ -169,6 +192,41 @@ public class GameMapActivity extends FragmentActivity implements
         }
 
         return isCurrentlyGuessing;
+    }
+
+    @Override
+    public void onSaveInstanceState(Bundle savedInstanceState) {
+        // Save the user's current game state
+        savedInstanceState.putString(STATE_PLAYERNAME, playerName);
+        savedInstanceState.putSerializable(STATE_DIFFICULTY, difficulty);
+        savedInstanceState.putSerializable(STATE_MODE, mode);
+        savedInstanceState.putParcelable(STATE_MARKER, currMarker);
+        savedInstanceState.putParcelable(STATE_GUESS_COORDS, currGuessCoords);
+        savedInstanceState.putLong(STATE_SCORE, currScore);
+        savedInstanceState.putInt(STATE_PLACE_INDEX, currPlaceIndex);
+        savedInstanceState.putBoolean(STATE_GAME_FINISHED, isGameFinished);
+        savedInstanceState.putBoolean(STATE_GAME_STARTED, isGameStarted);
+        savedInstanceState.putBoolean(STATE_GAME_GUESSING, isCurrentlyGuessing);
+
+        // Always call the superclass so it can save the view hierarchy state
+        super.onSaveInstanceState(savedInstanceState);
+    }
+
+    public void onRestoreInstanceState(Bundle savedInstanceState) {
+        // Always call the superclass so it can restore the view hierarchy
+        super.onRestoreInstanceState(savedInstanceState);
+
+        // Restore state members from saved instance
+        playerName = savedInstanceState.getString(STATE_PLAYERNAME);
+        difficulty = (GameDifficulty) savedInstanceState.getSerializable(STATE_DIFFICULTY);
+        mode = (GameMode) savedInstanceState.getSerializable(STATE_MODE);
+        currMarker = savedInstanceState.getParcelable(STATE_MARKER);
+        currGuessCoords = savedInstanceState.getParcelable(STATE_GUESS_COORDS);
+        currScore = savedInstanceState.getLong(STATE_SCORE);
+        currPlaceIndex = savedInstanceState.getInt(STATE_PLACE_INDEX);
+        isGameFinished = savedInstanceState.getBoolean(STATE_GAME_FINISHED);
+        isGameStarted = savedInstanceState.getBoolean(STATE_GAME_STARTED);
+        isCurrentlyGuessing = savedInstanceState.getBoolean(STATE_GAME_GUESSING);
     }
 
     private void gameStart() {
@@ -193,16 +251,10 @@ public class GameMapActivity extends FragmentActivity implements
     }
 
     private void handleGuess(LatLng guessCoordinates) {
+
         LatLng correctCoordinates = placesModel.getPlaces().get(currPlaceIndex);
 
         isCurrentlyGuessing = false;
-
-        map.addMarker(new MarkerOptions()
-                .position(correctCoordinates));
-
-        map.addPolyline(new PolylineOptions()
-                .add(guessCoordinates, correctCoordinates)
-                .color(R.color.fbutton_color_pumpkin));
 
         double distance = DistanceUtil.distanceBetweenInKilometers(guessCoordinates, correctCoordinates);
 
@@ -212,6 +264,8 @@ public class GameMapActivity extends FragmentActivity implements
                         distance,
                         difficulty
         );
+
+        showAnswer(guessCoordinates, correctCoordinates);
 
         String resultPhrase = getResources().getString(R.string.result_phrase)
                 .replace("XXX", DistanceUtil.distanceToString(distance));
@@ -225,8 +279,15 @@ public class GameMapActivity extends FragmentActivity implements
                             .build();
                     map.animateCamera(CameraUpdateFactory.newLatLngBounds(bounds, 100));
         }).show();
+    }
 
-        currPlaceIndex++;
+    private void showAnswer(LatLng guessCoordinates, LatLng correctCoordinates) {
+        map.addMarker(new MarkerOptions()
+                .position(correctCoordinates));
+
+        map.addPolyline(new PolylineOptions()
+                .add(guessCoordinates, correctCoordinates)
+                .color(R.color.fbutton_color_pumpkin));
 
         String scorePhrase = getResources().getString(R.string.snackbar_score) + " " + currScore;
 
@@ -235,10 +296,12 @@ public class GameMapActivity extends FragmentActivity implements
 
         Snackbar snackbar = Snackbar.make(contentView, scorePhrase, Snackbar.LENGTH_INDEFINITE);
         snackbar.setAction(R.string.snackbar_next_place, view -> {
-                    map.clear();
-                    currMarker = null;
-                    snackbar.dismiss();
-                    gameProgress();
+            map.clear();
+            currMarker = null;
+            currGuessCoords = null;
+            currPlaceIndex++;
+            snackbar.dismiss();
+            gameProgress();
         });
         snackbar.show();
     }

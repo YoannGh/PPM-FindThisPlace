@@ -3,8 +3,10 @@ package fr.upmc.m2sar.findthisplace.activities;
 import android.Manifest;
 import android.app.AlertDialog;
 import android.arch.lifecycle.ViewModelProviders;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.os.Build;
 import android.os.Bundle;
@@ -27,12 +29,15 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     private static final String TAG = "MainActivity";
 
     private final int permsRequestCode = 200;
+
+    private static final String STATE_PERMS = "hasPermissions";
     private boolean hasPermissions = false;
 
+    private static final String STATE_VALID_PLAYER_PROFILE = "validPlayerProfile";
     private boolean validPlayerProfile = false;
 
     private TextView playerNameTV;
-    private Button changePlayerProfile;
+    private Button pickPlayerProfile;
     private Button lvl0Btn;
     private Button lvl1Btn;
     private Button lvl2Btn;
@@ -60,19 +65,27 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         }
 
         playerNameTV = findViewById(R.id.playername);
-        changePlayerProfile = findViewById(R.id.btnChangePlayer);
+        pickPlayerProfile = findViewById(R.id.btnChangePlayer);
         lvl0Btn = findViewById(R.id.btnPlayLvl0);
         lvl1Btn = findViewById(R.id.btnPlayLvl1);
         lvl2Btn = findViewById(R.id.btnPlayLvl2);
         scoreBtn = findViewById(R.id.btnScores);
 
-        changePlayerProfile.setOnClickListener(this);
+        pickPlayerProfile.setOnClickListener(this);
         lvl0Btn.setOnClickListener(this);
         lvl1Btn.setOnClickListener(this);
         lvl2Btn.setOnClickListener(this);
         scoreBtn.setOnClickListener(this);
 
         playersModel = ViewModelProviders.of(this).get(PlayerProfileViewModel.class);
+
+        SharedPreferences sharedPref = getPreferences(Context.MODE_PRIVATE);
+        String lastPlayerName = sharedPref.getString(PlayerProfile.class.getName(), null);
+        if(lastPlayerName != null) {
+            playerNameTV.setText(lastPlayerName);
+            validPlayerProfile = true;
+        }
+
     }
 
     @Override
@@ -85,8 +98,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
     @Override
     public void onClick(View v) {
-        if(v == changePlayerProfile) {
-            showPlayerProfileDialog();
+        if(v == pickPlayerProfile) {
+            pickPlayerProfileDialog();
         }
         else if(v == lvl0Btn) {
             chooseGamemodeWithDifficulty(GameDifficulty.NOVICE);
@@ -101,6 +114,25 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             Intent intent = new Intent(this, ScoreActivity.class);
             startActivity(intent);
         }
+    }
+
+    @Override
+    public void onSaveInstanceState(Bundle savedInstanceState) {
+        // Save the user's current game state
+        savedInstanceState.putBoolean(STATE_PERMS, hasPermissions);
+        savedInstanceState.putBoolean(STATE_VALID_PLAYER_PROFILE, validPlayerProfile);
+
+        // Always call the superclass so it can save the view hierarchy state
+        super.onSaveInstanceState(savedInstanceState);
+    }
+
+    public void onRestoreInstanceState(Bundle savedInstanceState) {
+        // Always call the superclass so it can restore the view hierarchy
+        super.onRestoreInstanceState(savedInstanceState);
+
+        // Restore state members from saved instance
+        hasPermissions = savedInstanceState.getBoolean(STATE_PERMS);
+        validPlayerProfile = savedInstanceState.getBoolean(STATE_VALID_PLAYER_PROFILE);
     }
 
     private void chooseGamemodeWithDifficulty(GameDifficulty difficulty) {
@@ -141,7 +173,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         }
     }
 
-    private void showPlayerProfileDialog() {
+    private void pickPlayerProfileDialog() {
         int numPlayer = playersModel.getPlayerProfiles().getValue().size();
         String[] players = new String[numPlayer];
         PlayerProfile pp;
@@ -155,6 +187,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 .setItems(players, (DialogInterface dialog, int which) -> {
                     playerNameTV.setText(players[which]);
                     validPlayerProfile = true;
+                    saveLastUsedPlayerName(players[which]);
                 })
                 .setPositiveButton(R.string.dialog_create_new_player, (DialogInterface dialog, int which) -> {
                     LayoutInflater inflater = getLayoutInflater();
@@ -168,8 +201,10 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                                         && lastName != null && lastName.length() > 0) {
                                     playersModel.getPlayerProfiles().getValue().add(new PlayerProfile(firstName, lastName));
                                     playersModel.saveData();
-                                    playerNameTV.setText(firstName + " " + lastName);
+                                    String playerName = firstName + " " + lastName;
+                                    playerNameTV.setText(playerName);
                                     validPlayerProfile = true;
+                                    saveLastUsedPlayerName(playerName);
                                 }
                             })
                             .setNegativeButton(R.string.dialog_cancel, (DialogInterface dialogCreate, int whichCreate) -> {
@@ -180,6 +215,13 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                     dialog.dismiss();
                 })
         .show();
+    }
+
+    private void saveLastUsedPlayerName(String playerName) {
+        SharedPreferences sharedPref = getPreferences(Context.MODE_PRIVATE);
+        SharedPreferences.Editor editor = sharedPref.edit();
+        editor.putString(PlayerProfile.class.getName(), playerName);
+        editor.commit();
     }
 
 }

@@ -53,7 +53,7 @@ public class GameMapActivity extends FragmentActivity implements
 
     private static String TAG = "GameMapActivity";
 
-    private static int NUMBER_OF_PLACES_TO_GUESS = 3; // TODO clean
+    private static int NUMBER_OF_PLACES_TO_GUESS = 3;
 
     private GoogleMap map;
     private StreetViewPanorama streetView;

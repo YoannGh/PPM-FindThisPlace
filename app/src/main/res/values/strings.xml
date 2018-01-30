@@ -1,7 +1,7 @@
 <resources>
     <string name="app_name" translatable="false">FindThisPlace</string>
     <string name="OK">OK</string>
-    <string name="empty_string"></string>
+    <string name="empty_string" translatable="false"></string>
     <string name="play_btn">Play</string>
     <string name="lvl_0_name">novice</string>
     <string name="lvl_1_name">medium</string>
@@ -10,8 +10,8 @@
     <string name="result_phrase">You are: XXX away</string>
     <string name="end_game_title">End of game</string>
     <string name="end_game_message">Total score:</string>
-    <string name="title_activity_score">ScoreActivity</string>
-    <string name="title_activity_maps">Map</string>
+    <string name="title_activity_score" translatable="false">ScoreActivity</string>
+    <string name="title_activity_maps" translatable="false">Map</string>
     <string name="date_format">dd MMMM yyyy HH:mm</string>
     <string name="score_empty">No score yet</string>
     <string name="validate_position_title">Validate ?</string>

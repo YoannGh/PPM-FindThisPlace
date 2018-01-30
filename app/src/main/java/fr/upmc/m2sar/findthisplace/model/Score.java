@@ -3,6 +3,9 @@ package fr.upmc.m2sar.findthisplace.model;
 import java.io.Serializable;
 import java.util.Date;
 
+/**
+ * Données persistantes d'un score
+ */
 public class Score implements Serializable {
 
     private static final long serialVersionUID = 1L;

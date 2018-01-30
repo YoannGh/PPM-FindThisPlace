@@ -2,6 +2,9 @@ package fr.upmc.m2sar.findthisplace.model;
 
 import java.io.Serializable;
 
+/**
+ * Données persistantes d'un profil de joueur
+ */
 public class PlayerProfile implements Serializable {
 
     private static final long serialVersionUID = 1L;

@@ -15,6 +15,13 @@ import java.io.ObjectOutputStream;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * La classe ViewModel permet de stocker des donneés qui seront
+ * capables de survivre aux changements de configuration de l'application
+ * tels que les rotations d'écran
+ *
+ * Ici on garde la liste des profils de joueur utilisés dans la MainActivity
+ */
 public class PlayerProfileViewModel extends AndroidViewModel {
 
     private static final String TAG = "PlayerProfileViewModel";

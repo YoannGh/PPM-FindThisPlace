@@ -19,6 +19,9 @@ import java.util.List;
  * La classe ViewModel permet de stocker des donneés qui seront
  * capables de survivre aux changements de configuration de l'application
  * tels que les rotations d'écran
+ *
+ * Ici on garde les scores de toutes les parties jouées pour le ScoreFragment
+ * et on y ajoute les novueaux score pour la GameMapActivity
  */
 public class ScoreViewModel extends AndroidViewModel {
 

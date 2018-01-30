@@ -7,6 +7,9 @@ import android.view.WindowManager;
 
 import fr.upmc.m2sar.findthisplace.R;
 
+/**
+ * Activity contenant un simple fragment ScoreFragment
+ */
 public class ScoreActivity extends AppCompatActivity {
 
     private static final String TAG = "ScoreActivity";

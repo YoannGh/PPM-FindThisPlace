@@ -16,6 +16,9 @@ import java.util.Locale;
 import fr.upmc.m2sar.findthisplace.R;
 import fr.upmc.m2sar.findthisplace.model.Score;
 
+/*
+ * Adapter pour les données de score
+ */
 public class ScoreAdapter extends ArrayAdapter<Score> {
 
     private static final String TAG = "ScoreAdapter";
@@ -43,6 +46,7 @@ public class ScoreAdapter extends ArrayAdapter<Score> {
         TextView modeTV = convertView.findViewById(R.id.score_mode);
         TextView scoreTV = convertView.findViewById(R.id.score_score);
 
+        // on récupère la donnée à afficher
         Score score = getItem(position);
 
         if(score != null) {

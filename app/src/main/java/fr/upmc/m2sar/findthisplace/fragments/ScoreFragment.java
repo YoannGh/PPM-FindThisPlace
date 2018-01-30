@@ -14,6 +14,9 @@ import fr.upmc.m2sar.findthisplace.adapters.ScoreAdapter;
 import fr.upmc.m2sar.findthisplace.model.Score;
 import fr.upmc.m2sar.findthisplace.model.ScoreViewModel;
 
+/*
+ * Fragment contenant la ListeView des Scores
+ */
 public class ScoreFragment extends ListFragment {
 
     private static final String TAG = "ScoreFragment";
@@ -27,6 +30,8 @@ public class ScoreFragment extends ListFragment {
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
 
+        // on recupère le model qui existe déjà si l'activité est recréée après un changement de configuration
+        // sinon une nouvelle instance est créée
         final ScoreViewModel scoresModel = ViewModelProviders.of(getActivity()).get(ScoreViewModel.class);
 
         ScoreAdapter adapter = new ScoreAdapter(getActivity(), scoresModel.getScores().getValue());

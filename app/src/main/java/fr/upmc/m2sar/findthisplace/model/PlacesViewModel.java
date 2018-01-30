@@ -12,6 +12,9 @@ import java.util.List;
  * La classe ViewModel permet de stocker des donneés qui seront
  * capables de survivre aux changements de configuration de l'application
  * tels que les rotations d'écran
+ *
+ * Ici on garde les lieux choisis aléatoirement lors du démarrage d'une partie
+ * Ils resteront donc les mêmes durant toute la partie
  */
 public class PlacesViewModel extends ViewModel {
 

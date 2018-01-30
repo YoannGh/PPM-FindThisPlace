@@ -11,6 +11,10 @@ import java.util.Map;
 
 import fr.upmc.m2sar.findthisplace.game.GameDifficulty;
 
+
+/**
+ * Liste statique des lieux à deviner en fonction de la difficulté
+ */
 public class StaticPlaces {
 
     private static final Map<GameDifficulty, List<LatLng>> places;

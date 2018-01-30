@@ -13,6 +13,10 @@ import java.util.List;
 
 import fr.upmc.m2sar.findthisplace.R;
 
+/**
+ * Calcul du score renvoyant le score maximal si le bon pays est trouvé
+ * 0 sinon
+ */
 public class CountryBasedScoreCalculator implements IScoreCalculatorStrategy {
 
     private Context context;
@@ -55,6 +59,7 @@ public class CountryBasedScoreCalculator implements IScoreCalculatorStrategy {
         String title;
         String message;
 
+        // dialog affichant le nom du pays que l'utilisateur a trouvé
         if(score > 0) {
             title = context.getResources().getString(R.string.correct_country_dialog_title);
             message = context.getResources().getString(R.string.correct_country_dialog).replace("XXX", countryName);

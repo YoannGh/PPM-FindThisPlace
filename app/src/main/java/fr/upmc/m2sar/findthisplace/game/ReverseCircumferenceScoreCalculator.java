@@ -2,6 +2,9 @@ package fr.upmc.m2sar.findthisplace.game;
 
 import com.google.android.gms.maps.model.LatLng;
 
+/**
+ * Calcul du score en prenant la distance entre les 2 coords comme score
+ */
 public class ReverseCircumferenceScoreCalculator implements IScoreCalculatorStrategy {
 
     @Override

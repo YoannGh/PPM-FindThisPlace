@@ -45,6 +45,10 @@ import fr.upmc.m2sar.findthisplace.model.ScoreViewModel;
 import fr.upmc.m2sar.findthisplace.model.StaticPlaces;
 import fr.upmc.m2sar.findthisplace.util.DistanceUtil;
 
+/**
+ * Activity responsable du controle des fragments GoogleMap et StreetViewPanorama
+ * et gestion de la logique du jeu (via les méthode privées principalement)
+ */
 public class GameMapActivity extends FragmentActivity implements
         OnMapReadyCallback,
         OnStreetViewPanoramaReadyCallback,
@@ -58,9 +62,12 @@ public class GameMapActivity extends FragmentActivity implements
     private GoogleMap map;
     private StreetViewPanorama streetView;
 
+    // les attributs model permettent de garder en mémoire les données
+    // malgré les changements de configuration (rotation de l'écran)
     private PlacesViewModel placesModel;
     private ScoreViewModel scoresModel;
 
+    // clés pour la sauvegarde dans le savedInstanceState
     private static final String STATE_PLAYERNAME = "playerName";
     private static final String STATE_DIFFICULTY = "difficulty";
     private static final String STATE_MODE = "mode";
@@ -75,14 +82,14 @@ public class GameMapActivity extends FragmentActivity implements
     private String playerName;
     private GameDifficulty difficulty;
     private GameMode mode;
-    private MarkerOptions currMarker;
-    private LatLng currGuessCoords;
+    private MarkerOptions currMarker; // le marker affiché sur la GoogleMap (si != null)
+    private LatLng currGuessCoords;  // les dernières coordonnées que l'utilisateur a validé (null si il n'a pas encore validé)
     private long currScore = 0;
-    private int currPlaceIndex = 0;
+    private int currPlaceIndex = 0;  // l'index dans la liste contenu dans placesModel correspondant au lieu à chercher
     private boolean isGameFinished = false;
     private boolean isGameStarted = false;
     private boolean isCurrentlyGuessing = false;
-    private IScoreCalculatorStrategy scoreCalculator;
+    private IScoreCalculatorStrategy scoreCalculator; // score calculé en fonction de la difficulté et du mode de jeu
 
 
     @Override
@@ -98,6 +105,7 @@ public class GameMapActivity extends FragmentActivity implements
         difficulty = (GameDifficulty) intent.getSerializableExtra(GameDifficulty.class.getName());
         mode = (GameMode) intent.getSerializableExtra(GameMode.class.getName());
 
+        // on instancie scoreCalculator en fonction du mode de jeu choisi par l'utilisateur
         if(mode == GameMode.COUNTRY) {
             scoreCalculator = new CountryBasedScoreCalculator(this);
         }
@@ -108,7 +116,10 @@ public class GameMapActivity extends FragmentActivity implements
             scoreCalculator = new CircumferenceBasedScoreCalculator();
         }
 
+        // on recupère les models déjà existant si l'activité est recréée après un changement de configuration
+        // sinon une nouvelle instance est créée
         placesModel = ViewModelProviders.of(this).get(PlacesViewModel.class);
+        // On choisi des lieux aléatoires pour la partie si le model vient d'être créé
         placesModel.update(StaticPlaces.getRandomPlacesForDifficulty(difficulty, NUMBER_OF_PLACES_TO_GUESS));
 
         scoresModel = ViewModelProviders.of(this).get(ScoreViewModel.class);
@@ -148,38 +159,47 @@ public class GameMapActivity extends FragmentActivity implements
         gameStart();
     }
 
+    // on place un marker sur la map,
+    // l'utilisateur doit réappuyer sur le marker pour valider sa réponse
     @Override
     public void onMapClick(LatLng latLng) {
         Log.d(TAG, "onMapClick");
 
         if(isCurrentlyGuessing) {
+            // on fait en sorte qu'il n'y ai pas plus d'un marker sur la map à la fois
             map.clear();
             currMarker = new MarkerOptions().position(latLng).draggable(true);
             map.addMarker(currMarker);
         }
     }
 
+    // sauvegarde du score si la partie était terminée
     @Override
     public void onStop() {
         super.onStop();
 
         if(isGameFinished) {
+            // on recupère le model associé aux scores et on sauvegarde le nouveau score réalisé
             scoresModel.getScores().getValue().add(new Score(playerName, new Date(), difficulty.name(), mode.name(), currScore));
             scoresModel.saveData();
         }
     }
 
+    // pour valider une position l'utilisateur doit appuyer sur le marker
     @Override
     public boolean onMarkerClick(Marker marker) {
         if(currMarker == null || marker == null || !isGameStarted)
             return false;
 
         if(isCurrentlyGuessing) {
+            // dialog demandant à l'utilisateur s'il valide la position
             AlertDialog.Builder builder = new AlertDialog.Builder(this);
 
             builder.setMessage(R.string.validate_position_message).setCancelable(false);
 
             builder.setPositiveButton(R.string.validate_position_positive, (DialogInterface dialog, int which) -> {
+                // on enregistre les coords dans une variable d'instance pour pouvoir la sauvegarder
+                // si un changement de configuration survient
                 currGuessCoords = marker.getPosition();
                 handleGuess(currGuessCoords);
             });
@@ -194,6 +214,8 @@ public class GameMapActivity extends FragmentActivity implements
         return isCurrentlyGuessing;
     }
 
+    // sauvegarde des attributs qui ne sont pas contenus dans un model
+    // méthode appelée lors d'un changement de configuration
     @Override
     public void onSaveInstanceState(Bundle savedInstanceState) {
         // Save the user's current game state
@@ -212,6 +234,8 @@ public class GameMapActivity extends FragmentActivity implements
         super.onSaveInstanceState(savedInstanceState);
     }
 
+    // restauration des attributs qui ne sont pas contenus dans un model
+    // méthode appelée lors arpès un changement de configuration
     public void onRestoreInstanceState(Bundle savedInstanceState) {
         // Always call the superclass so it can restore the view hierarchy
         super.onRestoreInstanceState(savedInstanceState);
@@ -239,6 +263,7 @@ public class GameMapActivity extends FragmentActivity implements
     private void gameProgress() {
         if(stillPlacesToFind()) {
             isCurrentlyGuessing = true;
+            // on affiche le lieu suivant dans le fragment StreetViewPanorama
             streetView.setPosition(placesModel.getPlaces().get(currPlaceIndex), 50);
         } else {
             isGameFinished = true;
@@ -256,8 +281,10 @@ public class GameMapActivity extends FragmentActivity implements
 
         isCurrentlyGuessing = false;
 
+        // calcul de la distance entre la réponse de l'utilisateur et celle correct
         double distance = DistanceUtil.distanceBetweenInKilometers(guessCoordinates, correctCoordinates);
 
+        // calcul du score via la stratégie instanciée
         currScore += scoreCalculator.calculateScore(
                         correctCoordinates,
                         guessCoordinates,
@@ -265,13 +292,19 @@ public class GameMapActivity extends FragmentActivity implements
                         difficulty
         );
 
+        // affichage des 2 markers et d'un trait entre les 2
+        // + Snackbar affichant le score et permettant à l'utilisateur de passer
+        // à la question suivante
         showAnswer(guessCoordinates, correctCoordinates);
 
         String resultPhrase = getResources().getString(R.string.result_phrase)
                 .replace("XXX", DistanceUtil.distanceToString(distance));
 
+        // dialog affichant de la distance séparant la coordonnée devinée et la coordonnée correcte
         new AlertDialog.Builder(this).setMessage(resultPhrase)
                 .setPositiveButton(R.string.OK, (DialogInterface dialog, int which) -> {
+                    // zoom sur une zone géographique contenant la coordonnée devinée
+                    // et la coordonnée correcte
                     map.animateCamera(CameraUpdateFactory.zoomOut());
                     LatLngBounds bounds = LatLngBounds.builder()
                             .include(guessCoordinates)
@@ -281,6 +314,9 @@ public class GameMapActivity extends FragmentActivity implements
         }).show();
     }
 
+    // affichage des 2 markers et d'un trait entre les 2
+    // + Snackbar affichant le score et permettant à l'utilisateur de passer
+    // à la question suivante
     private void showAnswer(LatLng guessCoordinates, LatLng correctCoordinates) {
         map.addMarker(new MarkerOptions()
                 .position(correctCoordinates));
@@ -296,6 +332,7 @@ public class GameMapActivity extends FragmentActivity implements
 
         Snackbar snackbar = Snackbar.make(contentView, scorePhrase, Snackbar.LENGTH_INDEFINITE);
         snackbar.setAction(R.string.snackbar_next_place, view -> {
+            // on nettoie la map et on passe à la question suivante
             map.clear();
             currMarker = null;
             currGuessCoords = null;
@@ -309,10 +346,13 @@ public class GameMapActivity extends FragmentActivity implements
     private void handleEndOfGame() {
         String endGamePhrase = getResources().getString(R.string.end_game_message) + " " + currScore;
 
+        // dialog affichant le score total
         new AlertDialog.Builder(this)
                 .setTitle(R.string.end_game_title)
                 .setMessage(endGamePhrase)
+                .setCancelable(false)
                 .setPositiveButton(R.string.OK, (DialogInterface dialog, int which) -> {
+                    // fin de l'activité -> appel à onStop -> sauvegarde du score
                     finish();
         }).show();
     }

@@ -24,15 +24,21 @@ import fr.upmc.m2sar.findthisplace.model.PlacesViewModel;
 import fr.upmc.m2sar.findthisplace.model.PlayerProfile;
 import fr.upmc.m2sar.findthisplace.model.PlayerProfileViewModel;
 
+/**
+ * Activity de démarrage, elle permet de choisir/créer un profil de joueur,
+ * d'accéder à l'activité listant les scores et de commencer une partie
+ */
 public class MainActivity extends AppCompatActivity implements View.OnClickListener {
 
     private static final String TAG = "MainActivity";
 
     private final int permsRequestCode = 200;
 
+    // clé pour la sauvegarde dans le savedInstanceState
     private static final String STATE_PERMS = "hasPermissions";
     private boolean hasPermissions = false;
 
+    // clé pour la sauvegarde dans le savedInstanceState
     private static final String STATE_VALID_PLAYER_PROFILE = "validPlayerProfile";
     private boolean validPlayerProfile = false;
 
@@ -50,14 +56,11 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        //if(getApplication().getBaseContext().getFileStreamPath("scores.data").exists())
-        //    getApplication().getBaseContext().getFileStreamPath("scores.data").delete();
-
-        //if(getApplication().getBaseContext().getFileStreamPath("players.data").exists())
-        //    getApplication().getBaseContext().getFileStreamPath("players.data").delete();
-
         final String[] perms = { Manifest.permission.INTERNET };
 
+        // demande des permissions
+        // certainement inutile car l'API Google Maps est inclue dans les Google Services
+        // qui requiert déjà cette permission
         if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.M && !hasPermissions) {
             requestPermissions(perms, permsRequestCode);
         } else {
@@ -77,8 +80,11 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         lvl2Btn.setOnClickListener(this);
         scoreBtn.setOnClickListener(this);
 
+        // les attributs model permettent de garder en mémoire les données
+        // malgré les changements de configuration (rotation de l'écran)
         playersModel = ViewModelProviders.of(this).get(PlayerProfileViewModel.class);
 
+        // on récupère le dernier profil de joueur utilisé
         SharedPreferences sharedPref = getPreferences(Context.MODE_PRIVATE);
         String lastPlayerName = sharedPref.getString(PlayerProfile.class.getName(), null);
         if(lastPlayerName != null) {
@@ -116,6 +122,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         }
     }
 
+    // sauvegarde des attributs qui ne sont pas contenus dans un model
+    // méthode appelée lors d'un changement de configuration
     @Override
     public void onSaveInstanceState(Bundle savedInstanceState) {
         // Save the user's current game state
@@ -126,6 +134,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         super.onSaveInstanceState(savedInstanceState);
     }
 
+    // restauration des attributs qui ne sont pas contenus dans un model
+    // méthode appelée lors arpès un changement de configuration
     public void onRestoreInstanceState(Bundle savedInstanceState) {
         // Always call the superclass so it can restore the view hierarchy
         super.onRestoreInstanceState(savedInstanceState);
@@ -135,6 +145,9 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         validPlayerProfile = savedInstanceState.getBoolean(STATE_VALID_PLAYER_PROFILE);
     }
 
+    // si l'utilisateur a choisi un profil de joueur,
+    // on lui demande à quel mode de jeu il souhaite jouer
+    // sinon on lui demande de choisir un profil de joueur
     private void chooseGamemodeWithDifficulty(GameDifficulty difficulty) {
         if(validPlayerProfile) {
             String[] items = new String[GameMode.values().length];
@@ -157,6 +170,9 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
     }
 
+    // si l'utilisateur a accordé les permissions (INTERNET seulement)
+    // on lance l'activité de jeu avec la configuration choisie
+    // sinon on lui signale que l'application a besoin des permissions pour fonctionner
     private void startGameWithDifficultyAndModeIfPerms(GameDifficulty difficulty, GameMode mode) {
         if(hasPermissions) {
             Intent intent = new Intent(this, GameMapActivity.class);
@@ -173,23 +189,30 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         }
     }
 
+    // dialog permettant de choisir un profil de joueur
     private void pickPlayerProfileDialog() {
         int numPlayer = playersModel.getPlayerProfiles().getValue().size();
         String[] players = new String[numPlayer];
         PlayerProfile pp;
+        // création de la liste des profils qui existent déjà
         for(int i = 0; i < numPlayer; i++) {
             pp = playersModel.getPlayerProfiles().getValue().get(i);
             players[i] = pp.getFirstName() + " " + pp.getLastName();
         }
 
+        // dialog affichant la liste des profils de joueurs déjà créés
         new AlertDialog.Builder(this)
                 .setTitle(R.string.dialog_pick_player_title)
                 .setItems(players, (DialogInterface dialog, int which) -> {
+                    // lorsque l'utilisateur choisi un élément de la liste
+                    // mise à jour de la TextView
                     playerNameTV.setText(players[which]);
                     validPlayerProfile = true;
+                    // sauvegarde du choix dans les SharedPreferences
                     saveLastUsedPlayerName(players[which]);
                 })
                 .setPositiveButton(R.string.dialog_create_new_player, (DialogInterface dialog, int which) -> {
+                    // Création de la vue de dialog permettant de créer un nouveau profil
                     LayoutInflater inflater = getLayoutInflater();
                     View createPlayerView = inflater.inflate(R.layout.dialog_create_playerprofile, null);
                     new AlertDialog.Builder(this)
@@ -199,24 +222,30 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                                 String lastName = ((EditText) createPlayerView.findViewById(R.id.create_playerLastname)).getText().toString();
                                 if(firstName != null && firstName.length() > 0
                                         && lastName != null && lastName.length() > 0) {
+                                    // sauvegarde du nouveau profil
                                     playersModel.getPlayerProfiles().getValue().add(new PlayerProfile(firstName, lastName));
                                     playersModel.saveData();
                                     String playerName = firstName + " " + lastName;
+                                    // mise à jour de la TextView
                                     playerNameTV.setText(playerName);
                                     validPlayerProfile = true;
+                                    // sauvegarde du choix dans les SharedPreferences
                                     saveLastUsedPlayerName(playerName);
                                 }
                             })
                             .setNegativeButton(R.string.dialog_cancel, (DialogInterface dialogCreate, int whichCreate) -> {
+                                // annulation de la création de nouveau profil
                                 dialog.dismiss();
                     }).show();
                 })
                 .setNegativeButton(R.string.dialog_cancel, (DialogInterface dialog, int which) -> {
+                    // annulation du choix de profil
                     dialog.dismiss();
                 })
         .show();
     }
 
+    // sauvegarde du dernier profil de joueur utilisé dans les SharedPreferences
     private void saveLastUsedPlayerName(String playerName) {
         SharedPreferences sharedPref = getPreferences(Context.MODE_PRIVATE);
         SharedPreferences.Editor editor = sharedPref.edit();

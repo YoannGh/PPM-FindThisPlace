@@ -2,8 +2,8 @@
 
 ## Auteurs
 
-- Yoann Ghigoff (3506454)
-- Florian Reynier (3506673)
+- [YoannGh](https://github.com/YoannGh)
+- [Shyuto](https://github.com/Shyuto)
 
 ## Architecture du projet
 
